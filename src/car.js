@@ -18,14 +18,14 @@ Car.prototype.lookForFriend = function () {
 			continue;
 		}
 		var vector = new Vector(this.pos,all[i].pos);
-		if(vector.length()<70) {
+		if(vector.length()<100) {
 			var unitA = this.vector.getUnit();
 			var unitB = all[i].vector.getUnit();
-			// var unitC = new Vector(this.pos,all[i].pos).getUnit();
+			var unitC = new Vector(this.pos,all[i].pos).getUnit();
 			
-			var dotProduct = (unitA.x*unitB.x) + (unitA.y*unitB.y);
-			// var dotProduct2 = (unitA.x*unitC.x) + (unitA.y*unitC.y);
-			if((dotProduct > 0.2)){
+			var dotProduct = (unitA.x*unitB.x) + (unitA.y*unitB.y) + (unitA.z*unitB.z);
+			var dotProduct2 = (unitA.x*unitC.x) + (unitA.y*unitC.y) + (unitA.z*unitC.z);
+			if((dotProduct > 0.2)&&(dotProduct2 > 0)){
 				this.following.push(all[i]);
 			}
 			

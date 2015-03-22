@@ -11,3 +11,7 @@ Point.prototype.add = function(point) {
 	this.z+=point.z;
 	return this;
 }
+
+Point.prototype.copy = function() {
+	return new Point(this.x,this.y,this.z);
+}
