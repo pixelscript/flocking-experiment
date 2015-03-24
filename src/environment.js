@@ -11,15 +11,15 @@ var Environment = function (num,interaction,renderer) {
 		var p = new Point(getRandomArbitrary(renderer.width/4,renderer.width-(renderer.width/4)),getRandomArbitrary(renderer.height/4,renderer.height-(renderer.height/4)),getRandomArbitrary(renderer.height/4,renderer.height-(renderer.height/4)));
 		var x = 0;
 		while(x==0) {
-			x = getRandomArbitrary(-500,500);
+			x = getRandomArbitrary(-5,5);
 		}
 		var y = 0;
 		while(y==0) {
-			y = getRandomArbitrary(-500,500);
+			y = getRandomArbitrary(-5,5);
 		}
 		var z = 0;
 		while(z==0) {
-			z = getRandomArbitrary(-500,500);
+			z = getRandomArbitrary(-5,5);
 		}
 		var v = new Vector(new Point(x,y,z));
 		cars.push(new Car(p,v,interaction,renderer,this));

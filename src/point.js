@@ -12,6 +12,13 @@ Point.prototype.add = function(point) {
 	return this;
 }
 
+Point.prototype.scale = function(val) {
+	this.x*=val;
+	this.y*=val;
+	this.z*=val;
+	return this;
+}
+
 Point.prototype.copy = function() {
 	return new Point(this.x,this.y,this.z);
 }

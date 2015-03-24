@@ -74,7 +74,10 @@ Vector.prototype.copy = function() {
 	return new Vector(new Point(this.x,this.y,this.z));
 }
 
-Vector.prototype.getUnit = function() {
+Vector.prototype.getUnit = function(size) {
 	var length = this.length();
-	return new Vector(new Point(this.x/length,this.y/length,this.z/length));
+	if(!size) {
+		size = 1;
+	}
+	return new Vector(new Point((this.x/length)*size,(this.y/length)*size,(this.z/length)*size));
 }

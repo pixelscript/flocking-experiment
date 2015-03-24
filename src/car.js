@@ -1,4 +1,6 @@
-var Car = function (pos,vector,interaction,renderer,environment) {
+
+
+var Car = function (pos,vector,interaction,renderer,environment,fitness) {
 	this.interaction = interaction;
 	this.renderer = renderer;
 	this.environment = environment;
@@ -9,6 +11,7 @@ var Car = function (pos,vector,interaction,renderer,environment) {
 	this.colors = ['#0034FF','#00BBFF','#00FFA8','#1AFF00','#98FF00','#FFF200','#FF6B00','#FF0000']
 }
 
+
 Car.prototype.lookForFriend = function () {
 
 	var all = this.environment.cars;
@@ -18,7 +21,7 @@ Car.prototype.lookForFriend = function () {
 			continue;
 		}
 		var vector = new Vector(this.pos,all[i].pos);
-		if(vector.length()<100) {
+		if(vector.length()<50) {
 			var unitA = this.vector.getUnit();
 			var unitB = all[i].vector.getUnit();
 			var unitC = new Vector(this.pos,all[i].pos).getUnit();
@@ -45,17 +48,50 @@ Car.prototype.lerp = function(g,c,dt) {
 }
 
 Car.prototype.friendFollowing = function(dt){
-	this.lookForFriend();
 
 	if(this.following.length!=0) {
-		var targetVector = this.vector.copy();
+		var avHead = new Vector(new Point(0,0,0));
+		var avPos = new Point(0,0,0);
+		var avSep = new Vector(new Point(0,0,0));
 		for(var i=0;i<this.following.length;i++){
-			targetVector.add(this.following[i].vector);
+			// A computeAlignment
+			// A sum all vectors of each friend
+			avHead.add(this.following[i].vector);
+			// C computeCohesion
+			// C sum positions of each friend
+			avPos.add(this.following[i].pos);
+			// S computeSeparation
+			// S sum vectors to each friend
+			avSep.add(new Vector(this.pos,this.following[i].pos));
 		}
-		targetVector.scale(1/(this.following.length+1));
-		this.vector.x = this.lerp(targetVector.x,this.vector.x,dt*20);
-		this.vector.y = this.lerp(targetVector.y,this.vector.y,dt*20);
-		this.vector.z = this.lerp(targetVector.z,this.vector.z,dt*20);
+		var fraction = 1/(this.following.length);
+		//divide by total
+		avHead.scale(fraction);
+		avPos.scale(fraction);
+		avSep.scale(fraction);
+
+		var aweight = 0.25;
+		var cweight = 0.25;
+		var sweight = 0.26;
+		var mweight = 0.02;
+
+		// A
+		var alignment = avHead.getUnit().scale(aweight);
+		// C get vector to point
+		var cohesion = new Vector(this.pos,avPos).getUnit().scale(cweight);
+		// S inverse vector
+		var seperation = avSep.scale(-1).getUnit().scale(sweight);
+
+		var mouse = new Vector(this.pos,new Point(this.interaction.mouse.x,this.interaction.mouse.y,this.renderer.height/2)).getUnit().scale(mweight);
+		if(this.interaction.mouse.toggle){
+			mouse.scale(-1);
+		}
+		
+		var target = alignment.add(cohesion).add(seperation).add(mouse).getUnit(10);
+
+		this.vector.x = this.lerp(target.x,this.vector.x,dt*50);
+		this.vector.y = this.lerp(target.y,this.vector.y,dt*50);
+		this.vector.z = this.lerp(target.z,this.vector.z,dt*50);
 	}
 
 
@@ -88,10 +124,12 @@ Car.prototype.windowEdge = function(){
 }
 
 Car.prototype.tick = function(t){
+
+	this.lookForFriend();
 	
 	this.friendFollowing(t);
 
-	this.pos.add(this.vector.copy().scale(t));
+	this.pos.add(this.vector);
 
 	this.windowEdge();
 
@@ -105,5 +143,16 @@ Car.prototype.render = function(renderer){
 		col = this.colors[this.colors.length-1];
 	}
 	context.fillStyle = col;
-	context.fillRect(this.pos.x-2, this.pos.y-2, zFactor2,zFactor2);
+	context.strokeStyle = col;
+	var size = 10*zFactor;
+	context.beginPath();
+	context.arc(this.pos.x,this.pos.y,size, 0, Math.PI*2, true); 
+	context.closePath();
+	context.fill();
+
+	var v = this.vector.getUnit().scale(20);
+	context.beginPath();
+	context.moveTo(this.pos.x, this.pos.y);
+	context.lineTo(this.pos.x+v.x, this.pos.y+v.y);
+	context.stroke();
 }
