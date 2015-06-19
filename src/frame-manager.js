@@ -5,6 +5,7 @@ var FrameManager = function() {
 	this.renderer.setEnvironment(this.env);
 	this.lastTime = Date.now();
 	this.frameCall = this.frame.bind(this);
+	this.fps = new Fps();
 }
 
 FrameManager.prototype.start = function(){
@@ -25,7 +26,7 @@ FrameManager.prototype.frame = function(){
 		difference = (now - this.lastTime)/1000;
 	this.lastTime = now;
 	this.env.tick(difference);
-	
+	this.fps.tick();
 	this.renderer.render();
 	this.anim = requestAnimationFrame(this.frameCall);
 }

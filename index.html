@@ -41,12 +41,26 @@
 		.black {
 			background-color:black;
 		}
+		#fps {
+			position:absolute;
+			top:10px;
+			right:10px;
+			z-index:2;
+			text-align:center;
+			cursor:pointer;
+			background:white;
+			border:1px solid grey;
+			padding: 2px 6px 3px;
+		}
 	</style>
 
 </head>
 <body>
 	<button id="clear">toggle clear</button>
 	<button id="playpause">play/pause</button>
+	<div id="fps">0</div>
+<script src="src/polyfill.js"></script>
+<script src="src/fps.js"></script>
 <script src="src/interaction.js"></script>
 <script src="src/point.js"></script>
 <script src="src/vectors.js"></script>
@@ -75,5 +89,6 @@
 		},this));
 	});
 </script>
+
 </body>
 </html>
