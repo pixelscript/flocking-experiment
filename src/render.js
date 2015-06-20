@@ -1,7 +1,10 @@
 var colors = ['#0034FF','#00BBFF','#00FFA8','#1AFF00','#98FF00','#FFF200','#FF6B00','#FF0000']
 var twopi = Math.PI*2
 function render() {
-	context.clearRect(0, 0, canvas.width, canvas.height );
+	if(clearer){
+		context.clearRect(0, 0, canvas.width, canvas.height );
+	}
+	
 	
 	for(var i=0;i<boids.length;i++){
 		renderBoid(boids[i]);

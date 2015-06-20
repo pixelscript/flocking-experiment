@@ -21,5 +21,19 @@
 	<script src="src/setup.js"></script>
 	<script src="src/simulation.js"></script>
 
+	<script>
+		var toggle = true;
+		$('#playpause').on('click',$.proxy(function(e){
+			e.stopPropagation();
+			toggle = !toggle;
+		},this));
+
+		var clearer = true;
+		$('#clear').on('click',$.proxy(function(e){
+			e.stopPropagation();
+			clearer=!clearer;
+		},this));
+	</script>
+
 </body>
 </html>

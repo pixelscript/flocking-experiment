@@ -48,9 +48,11 @@ $(function(){
 	// render();
 
 	requestAnimationFrame(function animate(){
-		fps.tick();
-		render();
-		simulate();
+		if(toggle) {
+			fps.tick();
+			render();
+			simulate();
+		}
 		requestAnimationFrame(animate);
 	})
 
