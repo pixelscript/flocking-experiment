@@ -66,10 +66,11 @@ function getRandomArbitrary(min, max) {
 	return Math.random() * (max - min) + min;
 }
 
-var Fps = function() {
+var Fps = function(selector,prefix) {
+	this.prefix = prefix;
 	this.lastTime = Date.now();
 	this.history = [];
-	this.div = $('#fps');
+	this.div = $(selector);
 	this.count = 0;
 	this.bound = 100;
 }
@@ -85,7 +86,7 @@ Fps.prototype.tick = function(){
 	this.lastTime = now;
 	if(this.count>=this.bound){
 		this.count = 0;
-		this.div.html(this.calcAverage());
+		this.div.html(this.prefix+this.calcAverage().toString());
 	}
 	
 }

@@ -1,3 +1,18 @@
+// lastTime = Date.now();
+// dt=1;
+var boids = []
+	width = 0;
+	height = 0;
+
+importScripts('utils.js');
+
+onmessage = function(e) {
+	boids = e.data.boids;
+	width = e.data.width;
+	height = e.data.height;
+	setInterval(simulate,1000/60);
+}  
+
 function simulate(){
 	// var now = Date.now();
 	// dt = now - lastTime;
@@ -5,6 +20,7 @@ function simulate(){
 	for(var i=0;i<boids.length;i++){
 		advance(boids[i]);
 	}
+	postMessage(boids);
 }
 
 function advance(boid){

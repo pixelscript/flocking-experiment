@@ -1,7 +1,7 @@
 var boids = [];
 $(function(){
 	// fps tracking
-	var fps = new Fps();
+	var fps = new Fps('#fps','fps: ');
 	// mouse
 	var interaction = window.interaction = new Interaction();
 	// setup canvas
@@ -33,50 +33,48 @@ $(function(){
 				z = getRandomArbitrary(-5,5);
 			}
 			var v = [x,y,z];
-			boids.push(
-				{
-					pos : p,
-					vector : v,
-					followingNum : 0
-				});
+			boids.push({
+				pos : p,
+				vector : v,
+				followingNum : 0
+			});
 		}	
 	}
 
 	generateBoids(400);
+	var simulateWorker;
+	function createWorker(){
+		if (window.Worker && useWorker) {
+			if(!simulateWorker) {
+				simulateWorker = new Worker("src/simulation-worker.js");
 
-	//render
-	// render();
+				simulateWorker.onmessage = function(e) {
+					boids = e.data;
+				}
+
+				simulateWorker.postMessage({'boids':boids, 'width':width, 'height':height});
+			}
+		} else {
+			useWorker = false;
+		}
+	}
+	createWorker();
 
 	requestAnimationFrame(function animate(){
 		if(toggle) {
 			fps.tick();
 			render();
-			simulate();
+			if(!window.Worker || !useWorker){
+				simulate();
+				if(simulateWorker){
+					simulateWorker.terminate();
+					simulateWorker = null;
+				}
+			} else if(window.Worker && useWorker && !simulateWorker){
+				createWorker();
+			}
 		}
 		requestAnimationFrame(animate);
-	})
-
-	// if (window.Worker) {
-
-	// 	var simulate = new Worker("src/simulation.js");
-
-	// 	first.onchange = function() {
-	// 		simulate.postMessage([first.value,second.value]);
-	// 		console.log('Message posted to worker');
-	// 	}
-
-	// 	second.onchange = function() {
-	// 		simulate.postMessage([first.value,second.value]);
-	// 		console.log('Message posted to worker');
-	// 	}
-
-	// 	simulate.onmessage = function(e) {
-	// 	  result.textContent = e.data;
-	// 	  console.log('Message received from worker');
-	// 	}
-
-	// } else {
-	// 	console.log('nope');
-	// }
+	});
 });
 
